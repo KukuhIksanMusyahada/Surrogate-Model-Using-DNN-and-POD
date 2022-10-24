@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # Dataset Folder
-Data_Source/Raw/M_0.6
+Data_Source/Raw/
