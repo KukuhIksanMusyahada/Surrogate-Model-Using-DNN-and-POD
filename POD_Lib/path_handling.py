@@ -12,13 +12,13 @@ def get_raw_data():
     return os.path.join(get_data_source(), 'Raw')
 
 def M0_6():
-    return os.path.join(get_raw_data(), 'M0_6')
+    return os.path.join(get_raw_data(), 'M_0.6')
 
 def M0_7():
-    return os.path.join(get_raw_data(), 'M0_7')
+    return os.path.join(get_raw_data(), 'M_0.7')
 
 def M0_8():
-    return os.path.join(get_raw_data(), 'M0_8')
+    return os.path.join(get_raw_data(), 'M_0.8')
 
 
 def get_result_data():
