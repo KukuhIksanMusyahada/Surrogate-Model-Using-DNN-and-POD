@@ -1,7 +1,6 @@
 import os
 import tensorflow as tf
 import numpy as np
-import importlib
 import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
@@ -9,6 +8,10 @@ import pickle
 
 from keras.models import Sequential
 from keras.layers import Dense
+
+from POD_Lib import utility as ut
+from POD_Lib import calculation as calc
+from POD_Lib import path_handling as ph
 
 
 def my_models(x_input, label, k):
@@ -30,14 +33,14 @@ def my_models(x_input, label, k):
     history = model.fit(x_input,label.T, epochs=1000, verbose=0)
     return model,history
 
-def MAPE(true,pred):
+def mape(true,pred):
     '''This function will calculate the Mean Absolute Percentage Error'''
     return np.mean(abs((true-pred)/true)) *100
 
-def POD_Train(x_input, y_input,Mach=None,Vf='Low',case='CD'):
+def pod_train(x_input, y_input,Mach=None,Vf='Low',case='CD'):
     '''Train the models using POD method for all value of K.
     The training will take at around 10 minutes but can be different depended on device specs'''
-    U,s,V = perform_SVD(matrix= y_input)
+    U,s,_ = calc.perform_svd(matrix= y_input)
     k_max = U.shape[0]
     k = np.arange(1,(k_max),1)
     if case=='CD':
@@ -45,20 +48,20 @@ def POD_Train(x_input, y_input,Mach=None,Vf='Low',case='CD'):
     else:
       multiplier = 1
     for num in k:
-        U_hat= calc_U_hat(U, num)
-        delta_hat = calc_delta_hat(U_hat, sol_mat= y_input)
+        U_hat= calc.calc_u_hat(U, num)
+        delta_hat = calc.calc_delta_hat(U_hat, sol_mat= y_input)
         delta_hat_mul = delta_hat *multiplier
         model, hist = my_models(x_input,delta_hat_mul,num)
         if Vf.capitalize()=='Low':
-          savemodel(model, hist,num,VF=Vf.capitalize(),Mach=Mach,case=case)
+          save_model(model, hist,num,VF=Vf.capitalize(),Mach=Mach,case=case)
         elif Vf.capitalize()=='High':
-          savemodel(model, hist,num,VF=Vf.capitalize(),case=case)
+          save_model(model, hist,num,VF=Vf.capitalize(),case=case)
         else:
           print('Wrong Input VF Type!')
 
     return 
 
-def savemodel(model, history,K,VF='Low',Mach='None',case='CD' ,model_path: str=Models):
+def save_model(model, history,K,VF='Low',Mach='None',case='CD' ,model_path: str=ph.get_models()):
     """Save both model and history"""
     path = os.path.join(model_path,case.capitalize())
     if VF.capitalize() == 'Low':
@@ -113,8 +116,8 @@ def load_model(path,VF, num_model,Mach=None):
 
     return model, history
 
-def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = Models):
-  U,s,V = perform_SVD(matrix= y_input)
+def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = ph.get_models()):
+  U,s,_ = calc.perform_svd(matrix= y_input)
   k_max = U.shape[0]
   k = np.arange(1,(k_max),1)
   file_name = f'M_{str(mach)}_VF_{str(vf)}.csv'
@@ -127,13 +130,13 @@ def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = Models)
   if case.upper() == 'PITCH':
       col = [['pitch(airfoil)'], ['pitch_airfoil']]
   if mach < 0.7:
-        file_path = os.path.join(M0_6,file_name)
+        file_path = os.path.join(ph.M0_6(),file_name)
         Mach='M0_6'
   elif mach >= 0.7 and mach < 0.8:
-      file_path = os.path.join(M0_7,file_name)
+      file_path = os.path.join(ph.M0_7(),file_name)
       Mach='M0_7'
   elif mach >= 0.8:
-      file_path = os.path.join(M0_8,file_name)
+      file_path = os.path.join(ph.M0_8(),file_name)
       Mach='M0_8'
   if  case.upper() == 'PLUNGE' or case.upper() == 'PITCH':
       try:
@@ -141,7 +144,7 @@ def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = Models)
       except ValueError:
           file = pd.read_csv(file_path, usecols= col[1], nrows= 114,engine='python').to_numpy()
   else:
-      file = pd.read_csv(file_path, usecols=[case], nrows= 114, engine='python').to_numpy()
+      file = pd.read_csv(file_path, usecols=[case.upper()], nrows= 114, engine='python').to_numpy()
   
   Mape = []
   path = os.path.join(path,case.capitalize())
@@ -155,15 +158,15 @@ def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = Models)
   
   for num in k:
 
-    U_hat= calc_U_hat(U, num)
+    U_hat= calc.calc_u_hat(U, num)
 
     if VF == 'Low':
       model, _ = load_model(path,VF,num,Mach)
     else:
       model, _ = load_model(path,VF,num)
     res= (model.predict([[mach,vf]])).T/multiplier
-    predict = prediction(res, U_hat)
-    mape = MAPE(file,predict)
+    predict = calc.prediction(res, U_hat)
+    mape = mape(file,predict)
     Mape.append(mape)
     print(f'MAPE with k={num} is {mape}')
     
@@ -179,22 +182,22 @@ def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = Models)
 
 
 
-def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = Models):
+def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = ph.get_models()):
   '''Predict a new data'''
-  U,s,V = perform_SVD(matrix= y_input)
+  U,s,_ = calc.perform_svd(matrix= y_input)
   file_name = f'M_{str(mach)}_VF_{str(vf)}.csv'
   if case.upper() == 'PLUNGE':
     col = [['plunge(airfoil)'], ['plunge_airfoil']]
   if case.upper() == 'PITCH':
       col = [['pitch(airfoil)'], ['pitch_airfoil']]
   if mach < 0.7:
-        file_path = os.path.join(M0_6,file_name)
+        file_path = os.path.join(ph.M0_6(),file_name)
         Mach='M0_6'
   elif mach >= 0.7 and mach < 0.8:
-      file_path = os.path.join(M0_7,file_name)
+      file_path = os.path.join(ph.M0_7(),file_name)
       Mach='M0_7'
   elif mach >= 0.8:
-      file_path = os.path.join(M0_8,file_name)
+      file_path = os.path.join(ph.M0_8(),file_name)
       Mach='M0_8'
   if  case.upper() == 'PLUNGE' or case.upper() == 'PITCH':
       try:
@@ -202,7 +205,7 @@ def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = Models
       except ValueError:
           file = pd.read_csv(file_path, usecols= col[1], nrows= 114,engine='python').to_numpy()
   else:
-      file = pd.read_csv(file_path, usecols=[case], nrows= 114, engine='python').to_numpy()
+      file = pd.read_csv(file_path, usecols=[case.upper()], nrows= 114, engine='python').to_numpy()
   
   Mape = []
   path = os.path.join(path,case.capitalize())
@@ -214,7 +217,7 @@ def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = Models
   else:
     VF=Vf_type
 
-  U_hat= calc_U_hat(U, k)
+  U_hat= calc.calc_u_hat(U, k)
 
   if VF == 'Low':
     model, _ = load_model(path,VF,k,Mach)
@@ -228,8 +231,8 @@ def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = Models
     multiplier=1
   
   res= (model.predict([[mach,vf]])).T/multiplier
-  predict = prediction(res, U_hat)
-  mape = MAPE(file,predict)
+  predict = calc.prediction(res, U_hat)
+  mape = mape(file,predict)
   Mape.append(mape)
   print(f'MAPE with k={k} is {mape}')
   

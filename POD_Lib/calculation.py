@@ -2,7 +2,9 @@ import os
 
 import numpy as np
 import pandas as pd
+import scipy
 
+from scipy import linalg
 from POD_Lib import utility as ut
 
 # Define Solution Matrix
@@ -61,3 +63,18 @@ def sol_matrix(path,names='CD'):
     sol_mat = np.concatenate(sol_mat, axis=1)
     
     return  np.array(data_input),sol_mat, validation
+
+def perform_svd(matrix):
+    U,s, V = linalg.svd(matrix, full_matrices= True)
+    return U,s,V
+
+def calc_u_hat(matrix, k):
+    return matrix[:,:k]
+
+
+def calc_delta_hat(matrix, sol_mat):
+    return np.matmul(matrix.T, sol_mat)
+
+
+def prediction(delta_star, u_hat):
+    return np.matmul(u_hat, delta_star)

@@ -25,6 +25,6 @@ def get_result_data():
     return os.path.join(get_data_source(), 'Results')
 
 def get_models():
-    return os.path.join(get_result_data(),'Models')
+    return os.path.join(get_data_source(),'Models')
 
 
