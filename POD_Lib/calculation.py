@@ -16,8 +16,10 @@ def sol_matrix(path,names='CD'):
     files = list()
     if names.upper() == 'PLUNGE':
         col = [['plunge(airfoil)'], ['plunge_airfoil']]
+
     if names.upper() == 'PITCH':
         col = [['pitch(airfoil)'], ['pitch_airfoil']]
+        tp = 3
       
 
     
@@ -30,19 +32,17 @@ def sol_matrix(path,names='CD'):
                 except ValueError:
                     df = pd.read_csv(file_path, usecols= col[1], nrows= 114,engine='python').to_numpy()
             else:
-                df = pd.read_csv(file_path, usecols=[names], nrows= 114, engine='python').to_numpy()
+                df = pd.read_csv(file_path, usecols=[names.upper()], nrows= 114, engine='python').to_numpy()
             if np.isnan(df).any():
                 continue
             grad = ut.gradien(df)
             turn_point = ut.find_turn_point(grad)
                 # print(file)
-            if len(turn_point) < 3:
+            if len(turn_point) < tp:
                 print(f'{file} has {len(turn_point)} turn point')
                 continue
             files.append(file)
-            # sol_mat.append(df)
-            # data_input.append(list(extract_mach_and_vf(file)))
-    
+           
     np.random.seed(45)
     validation = np.random.choice(files, 4, replace=False)
     # print(validation)
@@ -55,7 +55,7 @@ def sol_matrix(path,names='CD'):
                 except ValueError:
                     df = pd.read_csv(file_path, usecols= col[1], nrows= 114,engine='python').to_numpy()
             else:
-                df = pd.read_csv(file_path, usecols=[names], nrows= 114, engine='python').to_numpy()
+                df = pd.read_csv(file_path, usecols=[names.upper()], nrows= 114, engine='python').to_numpy()
             sol_mat.append(df)
             data_input.append(list(ut.extract_mach_and_vf(file)))
     sol_mat = np.concatenate(sol_mat, axis=1)

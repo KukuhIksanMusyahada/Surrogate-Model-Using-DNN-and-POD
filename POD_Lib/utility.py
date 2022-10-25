@@ -37,3 +37,21 @@ def extract_mach_and_vf(file: str):
 
     return float(result.group(1)), float(result.group(2))
 
+def outlier_cleaner(input,sol_mat,min_thres=(-0.2), max_thres=0.4):
+    '''This function is used to delete any data point with a given threshold,
+    the input are the X and y data and the minimum or the maximum threshold.
+    If not specified the default threshold value is (-0.2) for minimum threshold and
+    (0.4) for maximum threshold'''
+    index = []
+    for i in range(sol_mat.shape[1]):
+        minim = sol_mat[:,i].min()
+        maxim = sol_mat[:,i].max()
+        if minim<min_thres or maxim>max_thres:
+            index.append(i)
+
+
+    X = np.delete(input,index,0)
+    y = np.delete(sol_mat,index,1)
+    return X,y
+
+
