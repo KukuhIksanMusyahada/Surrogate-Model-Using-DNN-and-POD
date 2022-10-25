@@ -112,3 +112,131 @@ def load_model(path,VF, num_model,Mach=None):
     print ("model history loaded")
 
     return model, history
+
+def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = Models):
+  U,s,V = perform_SVD(matrix= y_input)
+  k_max = U.shape[0]
+  k = np.arange(1,(k_max),1)
+  file_name = f'M_{str(mach)}_VF_{str(vf)}.csv'
+  if case.upper()=='CD':
+    multiplier=1000
+  else:
+    multiplier=1
+  if case.upper() == 'PLUNGE':
+    col = [['plunge(airfoil)'], ['plunge_airfoil']]
+  if case.upper() == 'PITCH':
+      col = [['pitch(airfoil)'], ['pitch_airfoil']]
+  if mach < 0.7:
+        file_path = os.path.join(M0_6,file_name)
+        Mach='M0_6'
+  elif mach >= 0.7 and mach < 0.8:
+      file_path = os.path.join(M0_7,file_name)
+      Mach='M0_7'
+  elif mach >= 0.8:
+      file_path = os.path.join(M0_8,file_name)
+      Mach='M0_8'
+  if  case.upper() == 'PLUNGE' or case.upper() == 'PITCH':
+      try:
+          file = pd.read_csv(file_path, usecols= col[0], nrows= 114,engine='python').to_numpy()
+      except ValueError:
+          file = pd.read_csv(file_path, usecols= col[1], nrows= 114,engine='python').to_numpy()
+  else:
+      file = pd.read_csv(file_path, usecols=[case], nrows= 114, engine='python').to_numpy()
+  
+  Mape = []
+  path = os.path.join(path,case.capitalize())
+  if Vf_type==None:
+    if vf>1.4:
+      VF = 'High'
+    else:
+      VF = 'Low'
+  else:
+    VF=Vf_type
+  
+  for num in k:
+
+    U_hat= calc_U_hat(U, num)
+
+    if VF == 'Low':
+      model, _ = load_model(path,VF,num,Mach)
+    else:
+      model, _ = load_model(path,VF,num)
+    res= (model.predict([[mach,vf]])).T/multiplier
+    predict = prediction(res, U_hat)
+    mape = MAPE(file,predict)
+    Mape.append(mape)
+    print(f'MAPE with k={num} is {mape}')
+    
+    plt.plot(predict, label=f'prediction at k={num}',)
+    plt.plot(file, label='data')
+    plt.title(f'{case.upper()} Curve of M_{str(mach)}_VF_{str(vf)}')
+    plt.xlabel('Time Step')
+    plt.ylabel(case.upper())
+    plt.legend()
+    plt.show()
+  print(f'The minimum MAPE is on k={np.argmin(Mape)+1} with the value {np.min(Mape)}')
+  return np.array(Mape)
+
+
+
+def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = Models):
+  '''Predict a new data'''
+  U,s,V = perform_SVD(matrix= y_input)
+  file_name = f'M_{str(mach)}_VF_{str(vf)}.csv'
+  if case.upper() == 'PLUNGE':
+    col = [['plunge(airfoil)'], ['plunge_airfoil']]
+  if case.upper() == 'PITCH':
+      col = [['pitch(airfoil)'], ['pitch_airfoil']]
+  if mach < 0.7:
+        file_path = os.path.join(M0_6,file_name)
+        Mach='M0_6'
+  elif mach >= 0.7 and mach < 0.8:
+      file_path = os.path.join(M0_7,file_name)
+      Mach='M0_7'
+  elif mach >= 0.8:
+      file_path = os.path.join(M0_8,file_name)
+      Mach='M0_8'
+  if  case.upper() == 'PLUNGE' or case.upper() == 'PITCH':
+      try:
+          file = pd.read_csv(file_path, usecols= col[0], nrows= 114,engine='python').to_numpy()
+      except ValueError:
+          file = pd.read_csv(file_path, usecols= col[1], nrows= 114,engine='python').to_numpy()
+  else:
+      file = pd.read_csv(file_path, usecols=[case], nrows= 114, engine='python').to_numpy()
+  
+  Mape = []
+  path = os.path.join(path,case.capitalize())
+  if Vf_type==None:
+    if vf>1.4:
+      VF = 'High'
+    else:
+      VF = 'Low'
+  else:
+    VF=Vf_type
+
+  U_hat= calc_U_hat(U, k)
+
+  if VF == 'Low':
+    model, _ = load_model(path,VF,k,Mach)
+  else:
+    model, _ = load_model(path,VF,k)
+  if case =='CD':
+    multiplier=1000
+  elif case=='CL':
+    multiplier=10
+  else:
+    multiplier=1
+  
+  res= (model.predict([[mach,vf]])).T/multiplier
+  predict = prediction(res, U_hat)
+  mape = MAPE(file,predict)
+  Mape.append(mape)
+  print(f'MAPE with k={k} is {mape}')
+  
+  plt.plot(predict, label=f'prediction at k={k}',)
+  plt.plot(file, label='data')
+  plt.title(f'{case} Curve of M_{str(mach)}_VF_{str(vf)}')
+  plt.xlabel('Time Step')
+  plt.ylabel(f'{case}')
+  plt.legend()
+  plt.show()
