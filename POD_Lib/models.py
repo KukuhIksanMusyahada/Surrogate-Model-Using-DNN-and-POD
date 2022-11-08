@@ -117,7 +117,7 @@ def load_model(path,VF, num_model,Mach=None):
     return model, history
 
 def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = ph.get_models()):
-  U,s,_ = calc.perform_svd(matrix= y_input)
+  U,_,_ = calc.perform_svd(matrix= y_input)
   k_max = U.shape[0]
   k = np.arange(1,(k_max),1)
   file_name = f'M_{str(mach)}_VF_{str(vf)}.csv'
@@ -169,14 +169,15 @@ def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = ph.get_
     mape = mape(file,predict)
     Mape.append(mape)
     print(f'MAPE with k={num} is {mape}')
-    
+    title=f'{case.upper()} Curve of M_{str(mach)}_VF_{str(vf)}'
     plt.plot(predict, label=f'prediction at k={num}',)
     plt.plot(file, label='data')
-    plt.title(f'{case.upper()} Curve of M_{str(mach)}_VF_{str(vf)}')
+    plt.title()
     plt.xlabel('Time Step')
     plt.ylabel(case.upper())
     plt.legend()
     plt.show()
+    plt.savefig(title,path=ph.get_validation_result())
   print(f'The minimum MAPE is on k={np.argmin(Mape)+1} with the value {np.min(Mape)}')
   return np.array(Mape)
 
@@ -235,11 +236,12 @@ def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = ph.get
   mape = mape(file,predict)
   Mape.append(mape)
   print(f'MAPE with k={k} is {mape}')
-  
+  title = f'{case} Curve of M_{str(mach)}_VF_{str(vf)}'
   plt.plot(predict, label=f'prediction at k={k}',)
   plt.plot(file, label='data')
-  plt.title(f'{case} Curve of M_{str(mach)}_VF_{str(vf)}')
+  plt.title(title)
   plt.xlabel('Time Step')
   plt.ylabel(f'{case}')
   plt.legend()
   plt.show()
+  ut.save_image(title,path=ph.get_prediction_result())
