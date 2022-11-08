@@ -27,4 +27,10 @@ def get_result_data():
 def get_models():
     return os.path.join(get_data_source(),'Models')
 
+def get_prediction_result():
+    return os.path.join(get_result_data(),'Prediction')
+
+def get_validation_result():
+    return os.path.join(get_result_data(),'Validation')
+
 
