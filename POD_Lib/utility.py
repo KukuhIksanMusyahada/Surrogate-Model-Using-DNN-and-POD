@@ -1,6 +1,11 @@
 import re
+import os
+import datetime
 
 import numpy as np
+import matplotlib.pyplot as plt
+
+from POD_Lib import path_handling as ph
 
 
 
@@ -53,4 +58,11 @@ def outlier_cleaner(input,sol_mat,min_thres=(-0.2), max_thres=0.4):
     y = np.delete(sol_mat,index,1)
     return X,y
 
-
+def save_image(name,path=ph.get_result_data(), extension='png'):
+    cur_time = datetime.datetime.now()
+    dir_name = f'{cur_time.year}{cur_time.month}{cur_time.day}{cur_time.hour}{cur_time.minute}'
+    file_name = path+dir_name+name+extension
+    dir = os.path.join(path,dir_name)
+    if os.path.exist(dir)==None:
+        os.makedirs(file_name)
+    plt.savefig(file_name,transparent = True)
