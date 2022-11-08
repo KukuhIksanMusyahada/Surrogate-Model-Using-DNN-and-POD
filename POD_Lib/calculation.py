@@ -7,6 +7,9 @@ import scipy
 from scipy import linalg
 from POD_Lib import utility as ut
 
+
+
+
 # Define Solution Matrix
 def sol_matrix(path,names='CD'):
     '''Solution Matrix is a matrix consist of target values, 
@@ -18,7 +21,7 @@ def sol_matrix(path,names='CD'):
     files = list()
     if names.upper() == 'PLUNGE':
         col = [['plunge(airfoil)'], ['plunge_airfoil']]
-
+        tp = 2
     if names.upper() == 'PITCH':
         col = [['pitch(airfoil)'], ['pitch_airfoil']]
         tp = 3
