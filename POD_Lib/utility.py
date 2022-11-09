@@ -58,11 +58,14 @@ def outlier_cleaner(input,sol_mat,min_thres=(-0.2), max_thres=0.4):
     y = np.delete(sol_mat,index,1)
     return X,y
 
-def save_image(name,path=ph.get_result_data(), extension='png'):
+def save_image(name,path, extension='.png'):
     cur_time = datetime.datetime.now()
     dir_name = f'{cur_time.year}{cur_time.month}{cur_time.day}{cur_time.hour}{cur_time.minute}'
-    file_name = path+dir_name+name+extension
     dir = os.path.join(path,dir_name)
-    if os.path.exist(dir)==None:
-        os.makedirs(file_name)
-    plt.savefig(file_name,transparent = True)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    file_name = name+extension
+    file_path = os.path.join(dir,file_name)
+    
+    plt.savefig(file_path)
+    plt.clf()
