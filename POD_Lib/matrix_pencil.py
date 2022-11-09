@@ -2,7 +2,7 @@ import numpy as np
 import scipy.linalg as la
 import scipy.signal as sig
 
-from models import POD_Predict
+from POD_Lib.models import POD_Predict
 
 """
 This code was obtained (as I remember) from the github of one of the (reference) authors earlier during my undergraduate studies.
