@@ -146,7 +146,6 @@ def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = ph.get_
   else:
       file = pd.read_csv(file_path, usecols=[case.upper()], nrows= 114, engine='python').to_numpy()
   
-  Mape = []
   path = os.path.join(path,case.capitalize())
   if Vf_type==None:
     if vf>1.4:
@@ -166,9 +165,9 @@ def POD_Validate(x_input, y_input,mach, vf,Vf_type=None,case='CD',path = ph.get_
       model, _ = load_model(path,VF,num)
     res= (model.predict([[mach,vf]])).T/multiplier
     predict = calc.prediction(res, U_hat)
-    mape = mape(file,predict)
-    Mape.append(mape)
-    print(f'MAPE with k={num} is {mape}')
+    Mape = mape(file,predict)
+    
+    print(f'MAPE with k={num} is {Mape}')
     title=f'{case.upper()} Curve of M_{str(mach)}_VF_{str(vf)}'
     plt.plot(predict, label=f'prediction at k={num}',)
     plt.plot(file, label='data')
@@ -208,7 +207,6 @@ def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = ph.get
   else:
       file = pd.read_csv(file_path, usecols=[case.upper()], nrows= 114, engine='python').to_numpy()
   
-  Mape = []
   path = os.path.join(path,case.capitalize())
   if Vf_type==None:
     if vf>1.4:
@@ -233,9 +231,8 @@ def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = ph.get
   
   res= (model.predict([[mach,vf]])).T/multiplier
   predict = calc.prediction(res, U_hat)
-  mape = mape(file,predict)
-  Mape.append(mape)
-  print(f'MAPE with k={k} is {mape}')
+
+
   title = f'{case} Curve of M_{str(mach)}_VF_{str(vf)}'
   plt.plot(predict, label=f'prediction at k={k}',)
   plt.plot(file, label='data')
@@ -243,5 +240,7 @@ def POD_Predict(x_input, y_input,mach, vf,k,case='CD',Vf_type=None,path = ph.get
   plt.xlabel('Time Step')
   plt.ylabel(f'{case}')
   plt.legend()
-  plt.show()
   ut.save_image(title,path=ph.get_prediction_result())
+  return np.array(predict)
+
+  
