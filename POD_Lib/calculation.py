@@ -19,12 +19,17 @@ def sol_matrix(path,names='CD'):
     sol_mat = list()
     data_input = list()
     files = list()
+    
     if names.upper() == 'PLUNGE':
         col = [['plunge(airfoil)'], ['plunge_airfoil']]
         tp = 2
-    if names.upper() == 'PITCH':
+    elif names.upper() == 'PITCH':
         col = [['pitch(airfoil)'], ['pitch_airfoil']]
         tp = 3
+    elif names.upper() == 'CD':
+        tp =2
+    elif names.upper() == 'CL':
+        tp=3
       
 
     
@@ -44,7 +49,7 @@ def sol_matrix(path,names='CD'):
             turn_point = ut.find_turn_point(grad)
                 # print(file)
             if len(turn_point) < tp:
-                print(f'{file} has {len(turn_point)} turn point')
+                print(f'{names} in {file} has {len(turn_point)} turn point')
                 continue
             files.append(file)
            
