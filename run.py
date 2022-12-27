@@ -4,7 +4,7 @@ from POD_Lib import utility as ut
 from POD_Lib import models as mod
 from POD_Lib import matrix_pencil as mp
 
-
+mach,vf = _,_
 
 if __name__=="__main__":
     # Take Solution Matrix of mach 0.6
@@ -42,3 +42,5 @@ if __name__=="__main__":
     model2, hist2 = mod.load_model(case='Non_POD',names='CL')
     model3, hist3 = mod.load_model(case='Non_POD',names='Pitch')
     model4, hist4 = mod.load_model(case='Non_POD',names='Plunge')
+
+    mod.POD_Predict(mach,vf)
