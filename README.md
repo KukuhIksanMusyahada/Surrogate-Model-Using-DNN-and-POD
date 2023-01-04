@@ -12,6 +12,14 @@
 ## For the report and presentation can be accessed with this [link](https://drive.google.com/drive/folders/1zJuHXgfFVUvrg6ptpNstRcuq0sfXN0bq?usp=share_link)
 
 ## Results
+## Prediction Test Compared to Raw Data
+<p align="center">
+  <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/Test1Drag150.png">
+</p>
+<p align="center">
+  <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/Test1Lift150.png">
+</p>
+
 ### Flutter Boundary Contour Plot
 #### Model with training size 50 Samples
 <p align="center">
