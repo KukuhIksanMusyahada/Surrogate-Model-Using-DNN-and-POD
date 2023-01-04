@@ -13,6 +13,8 @@
 
 ## Results
 ## Prediction Test Compared to Raw Data
+Some of the prediction result is shown below. For more result can be seen from report or presentation report
+
 <p align="center">
   <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/Test1Drag150.png">
 </p>
