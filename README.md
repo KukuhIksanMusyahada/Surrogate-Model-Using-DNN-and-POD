@@ -13,6 +13,6 @@
 
 ## Results
 <p align="center">
-  <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/fc0479981278fbd4e43d5540213200ee6842f7a6/flutter_boundary_compared1.png">
+  <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_compared1.png">
 </p>
 
