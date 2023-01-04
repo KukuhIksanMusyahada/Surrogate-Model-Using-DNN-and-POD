@@ -1,5 +1,4 @@
-# Aeroelastic_Analysis_Using_DNNxPOD
-## Title
+# Title
 **Development of Surrogate Model Using Deep Learning and Proper Orthogonal Decomposition**
 ## Problem Statements
 - Predict the aerodynamic properties of airfoil NACA 64A010 using **Surrogate Model**
