@@ -13,11 +13,21 @@
 
 ## Results
 ### Flutter Boundary Contour Plot
+#### Model with training size 50 Samples
 <p align="center">
   <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_50samples.png">
-  <img src="h\https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_100samples.png">
-  <img src="h\https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_150samples.png">
 </p>
+
+#### Model with training size 100 Samples
+<p align="center">
+  <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_50samples.png">
+  </p>
+
+#### Model with training size 150 Samples
+<p align="center">
+  <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_150samples.png">
+  </p>
+  
 ### Flutter Boundary Result Compared to Previous Research
 <p align="center">
   <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_compared1.png">
