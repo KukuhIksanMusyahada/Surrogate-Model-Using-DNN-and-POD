@@ -12,6 +12,13 @@
 ## For the report and presentation can be accessed with this [link](https://drive.google.com/drive/folders/1zJuHXgfFVUvrg6ptpNstRcuq0sfXN0bq?usp=share_link)
 
 ## Results
+### Flutter Boundary Contour Plot
+<p align="center">
+  <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_50samples.png">
+  <img src="h\https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_100samples.png">
+  <img src="h\https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_150samples.png">
+</p>
+### Flutter Boundary Result Compared to Previous Research
 <p align="center">
   <img src="https://github.com/KukuhIksanMusyahada/Aeroelastic_Analysis_Using_DNNxPOD/blob/main/flutter_boundary_compared1.png">
 </p>
